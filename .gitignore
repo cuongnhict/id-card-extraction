@@ -102,3 +102,10 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+dataset/*.npy
+dataset/**/*.jpg
+dataset/**/*.json
+images/*.jpg
+images/*.png
+models/*.h5
