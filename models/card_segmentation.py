@@ -3,7 +3,7 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from keras.callbacks import TensorBoard, ModelCheckpoint, EarlyStopping
 from keras.optimizers import Adam
-from model.unet_model import unet
+from models.unet_model import unet
 
 warnings.filterwarnings('ignore')
 
@@ -23,5 +23,5 @@ callbacks = [
 ]
 
 model = unet()
-model.compile(optimizer=Adam(lr=1e-4), loss='binary_crossentropy', metrics=['accuracy'])
+model.compile(optimizer=Adam(lr=1e-4), loss='binary_crossentropy', metrics=['binary_accuracy'])
 model.fit(X_train, y_train, epochs=60, callbacks=callbacks, validation_data=(X_val, y_val))

@@ -22,11 +22,15 @@ def extract_id_number(file_path, model):
     mask = mask.astype(np.uint8)
 
     # Opening
-    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (50, 50))
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (70, 70))
     mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
 
+    # Close
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (10, 10))
+    mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
+
     # Thresh with 100
-    mask = cv2.threshold(mask, 100, 255, cv2.THRESH_BINARY)[1]
+    mask = cv2.threshold(mask, 150, 255, cv2.THRESH_BINARY)[1]
 
     # Find contours and get contour max
     contours = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)[1]
@@ -58,7 +62,7 @@ def extract_id_number(file_path, model):
 
     # Crop id
     top, left = int(w * 2 / 6), int(h / 4)
-    bottom, right = int(w * 7 / 8 + w / 11), int(h / 3 + h / 11)
+    bottom, right = int(w * 7 / 8 + w / 14), int(h / 3 + h / 14)
     img_id = img[left:right, top:bottom]
 
     # Convert to gray
@@ -114,16 +118,13 @@ def extract_id_number(file_path, model):
         img_number = cv2.resize(img_number, (29, 44))
         digit_pred = digit_model.predict(img_number.reshape(1, 44, 29, 1))
         id_number.append(str(np.argmax(digit_pred)))
-        # cv2.rectangle(img_id, (x, y), (x + w, y + h), (0, 0, 255), 1)
+        cv2.rectangle(img_id, (x, y), (x + w, y + h), (0, 0, 255), 1)
 
     return ''.join(id_number)
 
 
 ID_NUMBER_LENGTH = 12
 image_paths = [
-    'images/mama_fullhd_00.jpg',
-    'images/mama_fullhd_01.jpg',
-    'images/mama_fullhd_02.jpg',
     'images/anh_fullhd_00.jpg',
     'images/cuong_fullhd_00.jpg',
     'images/cuong_fullhd_01.jpg',
@@ -135,10 +136,13 @@ image_paths = [
     'images/huyen_fullhd_01.jpg',
     'images/huyen_fullhd_02.jpg',
     'images/luc_fullhd_00.jpg',
-    'images/luc_fullhd_01.jpg'
+    'images/luc_fullhd_01.jpg',
+    'images/mama_fullhd_00.jpg',
+    'images/mama_fullhd_01.jpg',
+    'images/mama_fullhd_02.jpg'
 ]
-model = load_model('model/card_segmentation_60epochs.h5', compile=False)
-digit_model = load_model('model/digit_100epochs.h5', compile=False)
+model = load_model('models/card_segmentation_119epochs.h5', compile=False)
+digit_model = load_model('models/digit_100epochs.h5', compile=False)
 
 for file_path in image_paths:
     id_number = extract_id_number(file_path, model)
