@@ -12,20 +12,24 @@ class IdCardReader:
 
     # Main flow
     def extract_id_number(self, file_path):
-        # Read image from file path
-        img_org = cv2.imread(file_path)
+        try:
+            # Read image from file path
+            img_org = cv2.imread(file_path)
 
-        # Predict mask
-        mask = self.predict(img_org)
+            # Predict mask
+            mask = self.predict(img_org)
 
-        # Detect id card area
-        img = self.crop_id_card(img_org, mask)
+            # Detect id card area
+            img = self.crop_id_card(img_org, mask)
 
-        # Crop id number from card
-        img_id_number = self.crop_id_number(img)
+            # Crop id number from card
+            img_id_number = self.crop_id_number(img)
 
-        id_number = self.read_id_number(img_id_number)
-        return id_number
+            id_number = self.read_id_number(img_id_number)
+            return id_number
+        except Exception as e:
+            print(str(e))
+            return ''
 
     def predict(self, img_org):
         # Resize to 512x512

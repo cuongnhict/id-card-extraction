@@ -44,8 +44,8 @@ class Application(Frame):
         self.lbl1.grid(row=0, column=0, sticky=W)
 
         self.id_number = StringVar()
-        self.lbl_id_number = Label(self.frame_right, textvariable=self.id_number, fg='green', font='Helvetica 20 bold')
-        self.lbl_id_number.grid(row=0, column=0, padx=(20, 0), pady=(0, 2))
+        self.lbl_id_number = Label(self.frame_right, textvariable=self.id_number, font='Helvetica 18 bold')
+        self.lbl_id_number.grid(row=0, column=0, padx=(20, 0))
 
         self.btn_analysis = Button(self.frame_right, text='Phân tích', width=20, command=self.analysis)
         self.btn_analysis.grid(row=1, column=0)
@@ -77,7 +77,12 @@ class Application(Frame):
     def analysis(self):
         if self.file_name:
             id_number = self.id_reader.extract_id_number(self.file_name)
-            self.id_number.set(id_number)
+            if id_number != '':
+                self.lbl_id_number.configure(fg='green')
+                self.id_number.set(id_number)
+            else:
+                self.lbl_id_number.configure(fg='red')
+                self.id_number.set('Không tìm thấy')
         else:
             messagebox.showinfo('Cảnh báo', 'Bạn chưa chọn ảnh.')
 
